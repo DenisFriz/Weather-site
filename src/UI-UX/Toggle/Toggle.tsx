@@ -1,10 +1,8 @@
-import { useTheme } from "../../Contexts/Theme";
+import { useTheme } from "@contexts/Theme";
 import s from "./index.module.scss";
 
 const Toggle = () => {
-  const themeContext = useTheme();
-  const theme = themeContext ? themeContext.theme : undefined;
-  const changeTheme = themeContext ? themeContext.changeTheme : undefined;
+  const { theme, changeTheme } = useTheme();
 
   return (
     <div className={s.toggle__container}>
@@ -14,8 +12,11 @@ const Toggle = () => {
         className={s.toggle}
         onChange={changeTheme}
         value={theme}
+        checked={theme === "dark"}
       />
-      <label htmlFor="check">{theme === "light" ? "Light mode" : "Dark mode"}</label>
+      <label htmlFor="check">
+        {theme === "light" ? "Light mode" : "Dark mode"}
+      </label>
     </div>
   );
 };

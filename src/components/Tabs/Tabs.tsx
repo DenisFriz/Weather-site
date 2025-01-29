@@ -1,6 +1,7 @@
+import { useTheme } from "@contexts/Theme";
+import { useWeather } from "@contexts/WeatherData";
 import s from "./index.module.scss";
-import { useWeather } from "../../Contexts/WeatherData";
-import { useTheme } from "../../Contexts/Theme";
+import { Flex } from "antd";
 
 type TabsItems = "Today" | "Tomorrow" | "Next 7 day";
 
@@ -40,19 +41,21 @@ const Tabs = () => {
 
   return (
     <div className={s.tabs}>
-      <ul className={s.tabs__list}>
+      <Flex component={"ul"} className={s.tabs__list}>
         {TabsList.map((tab, index) => (
           <li
-            key={index}
             className={`${s.tabs__link} ${
-              theme === "dark" ? `${s.tabs__link_dark}` : null
+              theme === "dark" ? `${s.tabs__link_dark}` : ""
             }`}
+            key={index}
             onClick={() => handleClickTabs(tab)}
+            aria-label={tab}
+            title={tab}
           >
-            <div className={s.tabs__item}>{tab}</div>
+            {tab}
           </li>
         ))}
-      </ul>
+      </Flex>
     </div>
   );
 };

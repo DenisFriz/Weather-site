@@ -1,8 +1,8 @@
 import { Dispatch, SetStateAction } from "react";
 import s from "./index.module.scss";
 import { createPortal } from "react-dom";
-import { useWeather } from "../../Contexts/WeatherData";
-import { useTheme } from "../../Contexts/Theme";
+import { useTheme } from "@contexts/Theme";
+import { useWeather } from "@contexts/WeatherData";
 
 interface IModal {
   active: boolean;
@@ -11,10 +11,9 @@ interface IModal {
 }
 
 const Modal = ({ active, setActive, index }: IModal) => {
-  const themeContext = useTheme();
-  const theme = themeContext?.theme;
+  const { theme } = useTheme();
   const weatherContext = useWeather();
-  const forecast = weatherContext ? weatherContext.data : undefined;
+  const forecast = weatherContext?.data;
 
   const formatDate = (date: string) => {
     const dateObject = new Date(date);
@@ -34,6 +33,7 @@ const Modal = ({ active, setActive, index }: IModal) => {
     <div
       className={active ? s.overlay : s.hidden}
       onClick={() => setActive(false)}
+      data-testid="modal"
     >
       <div
         className={`${s.modal} ${theme === "dark" ? `${s.modal__dark}` : ""}`}

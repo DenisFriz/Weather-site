@@ -1,3 +1,5 @@
+import { API_KEY } from "@constants/constants";
+import type { Root } from "@global-types/main-types";
 import {
   ReactNode,
   createContext,
@@ -5,8 +7,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { Root } from "../GlobalStyles/GlobalStyle";
-import { API_KEY } from "../Constants/constants";
+import { useQuery, useQueryClient } from "react-query";
 
 type WeatherError = {
   isError: boolean;
@@ -48,38 +49,50 @@ async function getWeatherData<T>({
     return { success: false, error: error as Error };
   }
 }
-
+type WeatherQueryKey = [string, { city: string; days: string }];
 const WeatherData = ({ children }: { children: ReactNode }) => {
   const [currentCity, setCurrentCity] = useState("London");
   const [data, setData] = useState<Root | undefined>(undefined);
-  const [isLoading, setIsLoading] = useState(false);
   const [weatherError, setWeatherError] = useState<WeatherError>();
 
-  useEffect(() => {
-    (async function () {
-      setIsLoading(true);
-      const result = await getWeatherData<Root>({ city: "London", days: "1" });
-      if (result.success) {
-        setData(result.data);
-      } else {
-        setWeatherError({ isError: true, ErrorMessage: result.error.message });
-      }
-      setIsLoading(false);
-    })();
-  }, []);
+  const { refetch, isLoading } = useQuery(
+    ["weather", { city: "kyiv", days: "1" }] as WeatherQueryKey,
+    ({ queryKey }: { queryKey: WeatherQueryKey }) => {
+      const [, { city, days }] = queryKey;
+      return getWeatherData<Root>({ city, days });
+    },
+    {
+      enabled: false,
+    }
+  );
 
-  const updateData = ({ city, days }: WeatherType) => {
-    (async function () {
-      setIsLoading(true);
-      const result = await getWeatherData<Root>({ city, days });
-      if (result.success) {
-        setData(result.data);
-        setWeatherError({ isError: false, ErrorMessage: "" });
-      } else {
-        setWeatherError({ isError: true, ErrorMessage: result.error.message });
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    const handleData = async () => {
+      const { data } = await refetch();
+
+      if (data?.success) {
+        setData(data.data);
       }
-      setIsLoading(false);
-    })();
+    };
+    handleData();
+  }, [refetch]);
+
+  const updateData = async ({ city, days }: WeatherType) => {
+    const result = await queryClient.fetchQuery({
+      queryKey: ["weather", { city, days }] as WeatherQueryKey,
+      queryFn: ({ queryKey }: { queryKey: WeatherQueryKey }) => {
+        const [, { city, days }] = queryKey;
+        return getWeatherData<Root>({ city, days });
+      },
+    });
+
+    if (result.success) {
+      setData(result.data);
+      setWeatherError({ isError: false, ErrorMessage: "" });
+    } else {
+      setWeatherError({ isError: true, ErrorMessage: result.error.message });
+    }
   };
 
   const updateCity = (city: string) => {

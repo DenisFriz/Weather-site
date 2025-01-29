@@ -1,12 +1,12 @@
-import { useTheme } from "../../Contexts/Theme";
-import { useWeather } from "../../Contexts/WeatherData";
-import Loader from "../../UI-UX/Loader/Loader";
-import ErrorComponent from "../Errors/ErrorComponent";
+import ErrorComponent from "@components/Errors/ErrorComponent";
+import { useTheme } from "@contexts/Theme";
+import { useWeather } from "@contexts/WeatherData";
+import Loader from "@ui-ux/Loader/Loader";
 import s from "./index.module.scss";
+import { Space } from "antd";
 
 const CurrentWeather = () => {
-  const themeContext = useTheme();
-  const theme = themeContext ? themeContext.theme : undefined;
+  const { theme } = useTheme();
   const weatherData = useWeather();
 
   const loading = weatherData?.isLoading;
@@ -33,6 +33,7 @@ const CurrentWeather = () => {
       className={`${s.currentWeather} ${
         theme === "dark" ? `${s.currentWeather_dark}` : ""
       }`}
+      data-testid="currentWeather"
     >
       <h3 className={s.currentWeather__title}>
         {data.location.name + ", " + data.location.country}
@@ -51,51 +52,38 @@ const CurrentWeather = () => {
           {data.current.temp_c} °C
         </div>
       </div>
-      <div className={s.currentWeather__detailInfo}>
+      <Space className={s.currentWeather__detailInfo}>
         <ul className={s.currentWeather__list}>
           <li className={s.currentWeather__link}>
-            <div className={s.currentWeather__item}>
-              Pressure in millibars
-              <div className="detail-info">{data.current.pressure_mb} mb</div>
-            </div>
+            Pressure in millibars
+            <div className="detail-info">{data.current.pressure_mb} mb</div>
           </li>
           <li className={s.currentWeather__link}>
-            <div className={s.currentWeather__item}>
-              Humidity
-              <div className="detail-info">{data.current.humidity} %</div>
-            </div>
+            Humidity
+            <div className="detail-info">{data.current.humidity} %</div>
           </li>
           <li className={s.currentWeather__link}>
-            <div className={s.currentWeather__item}>
-              Cloud
-              <div className="detail-info">{data.current.cloud} %</div>
-            </div>
+            Cloud
+            <div className="detail-info">{data.current.cloud} %</div>
           </li>
           <li className={s.currentWeather__link}>
-            <div className={s.currentWeather__item}>
-              Wind gust
-              <div className="detail-info">{data.current.gust_kph} km/h</div>
-            </div>
+            Wind gust
+            <div className="detail-info">{data.current.gust_kph} km/h</div>
           </li>
           <li className={s.currentWeather__link}>
-            <div className={s.currentWeather__item}>
-              Wind speed
-              <div className="detail-info">{data.current.wind_kph} km/h</div>
-            </div>
+            Wind speed
+            <div className="detail-info">{data.current.wind_kph} km/h</div>
           </li>
         </ul>
-      </div>
-      <div className={s.currentWeather__detailInfo}>
+      </Space>
+      <Space className={s.currentWeather__detailInfo}>
         <ul className={s.currentWeather__list}>
           <li className={s.currentWeather__link}>
-            <div className={s.currentWeather__item}>
-              <img src="" />
-              5:30
-              <div className="detail-info">93%</div>
-            </div>
+            5:30
+            <div className="detail-info">93%</div>
           </li>
         </ul>
-      </div>
+      </Space>
     </div>
   );
 };

@@ -2,6 +2,7 @@
   position: absolute;
   top: 4em;
   right: 2em;
+  z-index: 100;
 }
 
 .toggle {
@@ -52,7 +53,25 @@
 
 @media screen and (max-width: 815px) {
   .toggle__container {
-    top: 2em;
+    top: 5em;
+  }
+}
+
+@media screen and (max-width: 785px) {
+  .toggle__container {
+    top: 6em;
+  }
+}
+
+@media screen and (max-width: 750px) {
+  .toggle__container {
+    top: 4em;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .toggle__container {
+    top: 8em;
   }
 }
 

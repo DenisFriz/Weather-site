@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import s from "./index.module.scss";
-import { useWeather } from "../../Contexts/WeatherData";
-import { useTheme } from "../../Contexts/Theme";
+import { MONTHS, DAYS_OF_WEEK } from "@constants/constants";
+import { useWeather } from "@contexts/WeatherData";
+import { Flex, Space, Button, Form, Input, Typography } from "antd";
+import { useTheme } from "@contexts/Theme";
+
+const { Text } = Typography;
 
 type ErrorObj = {
   isError: boolean;
@@ -16,41 +20,17 @@ type HeaderDate = {
 };
 
 const Header = () => {
-  const themeContext = useTheme();
+  const { theme } = useTheme();
   const [city, setCity] = useState("");
-  const theme = themeContext ? themeContext.theme : undefined;
   const [error, setError] = useState<ErrorObj>();
   const [date, setDate] = useState<HeaderDate>();
   const weatherData = useWeather();
 
   useEffect(() => {
     const tmpDate = new Date();
-    const daysOfWeek = [
-      "Воскресенье",
-      "Понедельник",
-      "Вторник",
-      "Среда",
-      "Четверг",
-      "Пятница",
-      "Суббота",
-    ];
-    const months = [
-      "Январь",
-      "Февраль",
-      "Март",
-      "Апрель",
-      "Май",
-      "Июнь",
-      "Июль",
-      "Август",
-      "Сентябрь",
-      "Октябрь",
-      "Ноябрь",
-      "Декабрь",
-    ];
     const date: HeaderDate = {
-      month: months[tmpDate.getMonth()],
-      dayOfWeek: daysOfWeek[tmpDate.getDay()],
+      month: MONTHS[tmpDate.getMonth()],
+      dayOfWeek: DAYS_OF_WEEK[tmpDate.getDay()],
       year: tmpDate.getFullYear(),
     };
 
@@ -62,13 +42,13 @@ const Header = () => {
   }
   const { updateData, updateCity } = weatherData;
 
-  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (city.trim().length == 0) {
+  const handleFormSubmit = async (values: { city: string }) => {
+    const city = values.city?.trim();
+    if (!city || city.length == 0) {
       setError({
         isError: true,
         errorCode: 402,
-        errorMessage: "Please, enter the city name.",
+        errorMessage: "Please, enter the city name using Latin characters.",
       });
     } else {
       setError({
@@ -78,42 +58,58 @@ const Header = () => {
       });
       updateData({ city: city, days: "1" });
       updateCity(city);
+      setCity("");
     }
   };
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setError({
+      isError: false,
+      errorCode: 200,
+      errorMessage: "",
+    });
     setCity(e.target.value.replace(/[^a-zA-Z ]/g, ""));
   };
 
   return (
-    <header
-      className={`${s.header} ${theme === "dark" ? `${s.header_dark}` : ""}`}
-    >
-      <div className={s.header__dateInfo}>
-        <span className={s.header__dateInfoTop}>
+    <Flex component={"header"} justify="space-between" align="center">
+      <Space direction="vertical">
+        <Text className={s.header__dateInfoTop}>
           {date?.month} {date?.year}
-        </span>
-        <span className={s.header__dateInfoBottom}>
+        </Text>
+        <Text className={s.header__dateInfoBottom} data-testid="date">
           {date?.dayOfWeek} {date?.month} {date?.year}
-        </span>
-      </div>
-      <form onSubmit={handleFormSubmit} className={s.header__form}>
-        <input
-          type="text"
-          placeholder="Search City..."
-          value={city}
-          onChange={handleInput}
-        />
-        <button
-          type="submit"
-          className={`btn ${theme === "dark" ? "btn_dark" : ""}`}
-        >
-          Search
-        </button>
+        </Text>
+      </Space>
+      <Form
+        onFinish={handleFormSubmit}
+        style={{ display: "flex", alignItems: "center", columnGap: "6px" }}
+        className={`${s.header__form} ${
+          theme === "dark" ? s.header__form_dark : ""
+        }`}
+      >
+        <Form.Item style={{ margin: "0" }} name="city">
+          <Input
+            placeholder="Search city..."
+            value={city}
+            onChange={handleInput}
+          />
+        </Form.Item>
+        <Form.Item style={{ margin: "0" }}>
+          <Button
+            type="primary"
+            htmlType="submit"
+            aria-label="Search"
+            title="Search"
+            data-testid="submit-btn"
+          >
+            Search
+          </Button>
+        </Form.Item>
         {error?.isError && (
           <div className={s.header__error}>{error.errorMessage}</div>
         )}
-      </form>
-    </header>
+      </Form>
+    </Flex>
   );
 };
 

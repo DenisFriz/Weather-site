@@ -5,6 +5,10 @@
   color: #000;
   margin-top: 15px;
 
+  &_dark {
+    color: #f6f6f6;
+  }
+
   @media screen and (max-width: 1030px) {
     flex-direction: column;
     row-gap: 10px;
@@ -31,6 +35,17 @@
       border: none;
       border-radius: 5px;
       padding: 8px 6px 8px 25px;
+      outline: none;
+      caret-color: #1271e2;
+      font-size: 1rem;
+      margin-right: 6px;
+    }
+
+    &_dark {
+      input {
+        color: #000;
+        caret-color: #d6bd4d;
+      }
     }
   }
 
@@ -38,8 +53,4 @@
     font-size: 20px;
     color: red;
   }
-}
-
-.header_dark {
-  color: #f6f6f6;
 }

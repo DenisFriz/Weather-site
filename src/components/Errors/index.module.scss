@@ -4,6 +4,11 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
+
+  &__dark {
+    color: #d6bd4d;
+  }
+
   &__img {
     width: 120px;
     height: 120px;
@@ -14,10 +19,6 @@
     font-size: 20px;
     font-weight: 600;
   }
-}
-
-.error__dark {
-  color: #d6bd4d;
 }
 
 @media screen and (max-width: 750px) {

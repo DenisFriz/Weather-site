@@ -5,6 +5,7 @@
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
+    "types": ["vitest/globals", "node", "vitest"],
 
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -18,8 +19,20 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": "src",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@components/*": ["components/*"],
+      "@constants/*": ["constants/*"],
+      "@contexts/*": ["contexts/*"],
+      "@global-types/*": ["global-types/*"],
+      "@images/*": ["images/*"],
+      "@styles/*": ["styles/*"],
+      "@ui-ux/*": ["ui-ux/*"],
+      "@utils/*": ["utils/*"]
+    }
   },
-  "include": ["src"],
+  "include": ["src", "./src/test/setup.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

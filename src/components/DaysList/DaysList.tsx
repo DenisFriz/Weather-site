@@ -1,11 +1,13 @@
+import ErrorComponent from "@components/Errors/ErrorComponent";
+import { useTheme } from "@contexts/Theme";
+import { useWeather } from "@contexts/WeatherData";
+import type { IForecastday } from "@global-types/main-types";
+import Loader from "@ui-ux/Loader/Loader";
+import Modal from "@ui-ux/Modal/Modal";
+import { getDay } from "@utils/getDay";
 import { useState } from "react";
-import type { IForecastday } from "../../GlobalStyles/GlobalStyle";
 import s from "./index.module.scss";
-import Modal from "../../UI-UX/Modal/Modal";
-import { useTheme } from "../../Contexts/Theme";
-import Loader from "../../UI-UX/Loader/Loader";
-import { useWeather } from "../../Contexts/WeatherData";
-import ErrorComponent from "../Errors/ErrorComponent";
+import { Flex, Button } from "antd";
 
 const DaysList = () => {
   const weatherData = useWeather();
@@ -39,11 +41,6 @@ const DaysList = () => {
   );
 };
 
-function getDay(day: string) {
-  const dateObject = new Date(day);
-  return dateObject.toLocaleDateString("en-US", { weekday: "long" });
-}
-
 interface IItem {
   data: IForecastday;
   index: number;
@@ -51,20 +48,19 @@ interface IItem {
 
 function Item({ data, index }: IItem) {
   const [active, setActive] = useState(false);
-  const themeContext = useTheme();
-  const theme = themeContext ? themeContext.theme : undefined;
+  const { theme } = useTheme();
 
   return (
-    <div
+    <Flex
+      vertical
+      align="center"
       className={`${s.days__item} ${
         theme === "dark" ? `${s.days__item_dark}` : ""
       }`}
+      data-testid="days-item"
     >
-      <div className={s.days__day}>{getDay(data.date)}</div>
-      <div className={s.days__img}>
-        <img src="" alt="" />
-      </div>
-      <div className={s.days__temp}>
+      <h4 className={s.days__day}>{getDay(data.date)}</h4>
+      <Flex align="flex-end" className={s.days__temp}>
         <div className={s.days__tempMin}>
           <span>min</span> {data.day.mintemp_c}°
         </div>
@@ -74,15 +70,17 @@ function Item({ data, index }: IItem) {
         <div className={s.days__tempMax}>
           <span>max</span> {data.day.maxtemp_c}°
         </div>
-      </div>
-      <button
-        className={`btn ${theme === "dark" ? "btn_dark" : ""}`}
+      </Flex>
+      <Button
         onClick={() => setActive(true)}
+        className={`btn ${theme === "dark" ? "btn_dark" : ""}`}
+        aria-label="More info"
+        title="More info"
       >
         More info
-      </button>
+      </Button>
       <Modal active={active} setActive={setActive} index={index} />
-    </div>
+    </Flex>
   );
 }
 

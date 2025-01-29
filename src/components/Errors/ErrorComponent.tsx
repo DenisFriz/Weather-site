@@ -1,5 +1,5 @@
-import { useTheme } from "../../Contexts/Theme";
-import errorIMG from "../../images/error_currentWeather.png";
+import { useTheme } from "@contexts/Theme";
+import errorIMG from "@images/error_currentWeather.png";
 import s from "./index.module.scss";
 
 const ErrorComponent = ({ ErrorMessage }: { ErrorMessage: string }) => {
